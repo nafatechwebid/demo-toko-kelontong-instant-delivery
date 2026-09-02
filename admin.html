@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Setup Toko — Admin</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#1B3A34">
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <h1>Setup Toko</h1>
+      <div class="tagline">Isi berurutan, bisa disimpan bertahap</div>
+    </div>
+  </div>
+
+  <!-- LOGIN / BUAT TOKO -->
+  <div id="gate" class="section">
+    <div class="section-title">Masuk / buat toko baru</div>
+    <label>Slug toko (untuk link, tanpa spasi)</label>
+    <input type="text" id="gateSlug" placeholder="contoh: warung-bu-siti">
+    <label>PIN admin (4-6 digit, dibuat sendiri)</label>
+    <input type="text" id="gatePin" placeholder="1234" inputmode="numeric">
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="masukAtauBuat()">Masuk / Buat Toko</button>
+    </div>
+    <p class="help">Kalau slug belum ada, toko baru otomatis dibuat dengan PIN ini. Kalau sudah ada, PIN harus cocok.</p>
+  </div>
+
+  <div id="wizard" style="display:none">
+
+    <!-- STEP 1: PROFIL TOKO -->
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <h3>Nama toko & logo</h3>
+        <p class="help">Ditampilkan di bagian atas halaman toko.</p>
+        <label>Nama toko</label>
+        <input type="text" id="namaToko" placeholder="Warung Bu Siti">
+        <label>Logo toko</label>
+        <input type="file" id="logoFile" accept="image/*">
+        <div class="btn-row"><button class="btn btn-outline" onclick="simpanProfil()">Simpan profil</button></div>
+      </div>
+    </div>
+
+    <!-- STEP 2: BARANG -->
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <h3>Daftar barang <span class="chip chip-muted" id="counterBarang">0/100</span></h3>
+        <p class="help">Maksimal 100 barang. Tambah satu per satu.</p>
+        <label>Nama barang</label>
+        <input type="text" id="bNama" placeholder="Beras 5kg">
+        <label>Harga (Rp)</label>
+        <input type="number" id="bHarga" placeholder="65000">
+        <label>Stok</label>
+        <input type="number" id="bStok" placeholder="20">
+        <label>Foto barang (opsional)</label>
+        <input type="file" id="bFoto" accept="image/*">
+        <div class="btn-row"><button class="btn btn-outline" onclick="tambahBarang()">Tambah barang</button></div>
+        <div id="listBarang" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <!-- STEP 3: REKENING -->
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <h3>Rekening bank <span class="chip chip-muted" id="counterRek">0/10</span></h3>
+        <p class="help">Maksimal 10 rekening untuk pembeli transfer manual.</p>
+        <label>Nama bank</label>
+        <input type="text" id="rBank" placeholder="BCA / BRI / Mandiri...">
+        <label>Nomor rekening</label>
+        <input type="text" id="rNomor" placeholder="1234567890">
+        <label>Atas nama</label>
+        <input type="text" id="rNama" placeholder="Siti Aminah">
+        <div class="btn-row"><button class="btn btn-outline" onclick="tambahRekening()">Tambah rekening</button></div>
+        <div id="listRekening" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <!-- STEP 4: QRIS -->
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-body">
+        <h3>QRIS statis</h3>
+        <p class="help">Upload gambar QRIS statis toko. Field di bawah bebas diisi — bisa link referral (mis. link daftar QRIS di penyedia tertentu) atau catatan untuk pembeli.</p>
+        <label>Gambar QRIS</label>
+        <input type="file" id="qFile" accept="image/*">
+        <label>Catatan / link tambahan (opsional)</label>
+        <textarea id="qCatatan" rows="2" placeholder="Contoh: Belum punya QRIS toko? Daftar di sini: https://..."></textarea>
+        <div class="btn-row"><button class="btn btn-outline" onclick="simpanQris()">Simpan QRIS</button></div>
+        <div id="previewQris" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <!-- STEP 5: GEOFENCING -->
+    <div class="step">
+      <div class="step-num">05</div>
+      <div class="step-body">
+        <h3>Lokasi & radius antar</h3>
+        <p class="help">
+          <b>Cara isi:</b> buka halaman ini dari HP saat Anda benar-benar berada di dalam toko,
+          lalu tekan "Ambil lokasi saat ini". Atur radius agar pembeli tahu apakah alamatnya
+          masih terjangkau kurir instant.
+        </p>
+        <div class="btn-row"><button class="btn btn-outline" onclick="ambilLokasi()">📍 Ambil lokasi saat ini</button></div>
+        <div id="lokasiInfo" class="help" style="margin-top:8px"></div>
+        <label>Radius layanan (meter)</label>
+        <input type="number" id="radiusMeter" value="500">
+        <div class="btn-row"><button class="btn btn-outline" onclick="simpanGeo()">Simpan lokasi</button></div>
+      </div>
+    </div>
+
+    <!-- STEP 6: ONGKIR -->
+    <div class="step">
+      <div class="step-num">06</div>
+      <div class="step-body">
+        <h3>Ongkir instant</h3>
+        <p class="help">
+          GoSend, Grab Express, SPX Instant, dan Maxim tidak punya API terbuka untuk
+          reseller kecil, jadi ongkir dihubungkan lewat aggregator (Biteship/KiriminAja)
+          yang sudah resmi terkoneksi ke kurir-kurir tersebut. Daftarkan toko di
+          aggregator pilihan, lalu isi API key di file <code>config.js</code> sebelum upload
+          ke GitHub Pages — tidak perlu diisi dari halaman ini.
+        </p>
+        <span class="chip" id="ongkirStatus">Mengecek config.js...</span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <a id="linkToko" class="btn btn-primary" href="#" target="_blank" style="text-decoration:none">Lihat halaman toko →</a>
+    </div>
+  </div>
+
+  <div class="footer-note">Toko Kelontong App — didukung Supabase</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="app-common.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

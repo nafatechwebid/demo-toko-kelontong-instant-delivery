@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Toko Kelontong</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#1B3A34">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+<div class="wrap">
+
+  <div id="loading" style="padding:60px 0;text-align:center;color:var(--ink-soft)">Memuat toko...</div>
+
+  <div id="content" style="display:none">
+    <div class="topbar">
+      <img class="logo" id="logoToko" alt="logo toko">
+      <div>
+        <h1 id="namaTokoTampil"></h1>
+        <div class="tagline">Belanja langsung dari toko dekat rumah</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Barang</div>
+      <div id="barangGrid" class="barang-grid"></div>
+      <div id="barangKosong" class="empty" style="display:none">Belum ada barang diunggah.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Cara bayar</div>
+      <div id="rekeningList"></div>
+      <div id="qrisWrap" class="qris-box" style="margin-top:16px"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Cek jangkauan & antar instant</div>
+      <div id="geoStatus" class="geo-status" style="display:none"></div>
+      <button class="btn btn-outline" onclick="cekJangkauan()">📍 Cek jarak dari lokasi saya</button>
+      <div class="ongkir-list" id="ongkirList"></div>
+    </div>
+
+    <div class="footer-note">Dibuat dengan Toko Kelontong App</div>
+  </div>
+
+  <div id="notFound" style="display:none;padding:60px 0;text-align:center;">
+    <p>Toko tidak ditemukan. Cek kembali link yang diberikan.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="app-common.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
